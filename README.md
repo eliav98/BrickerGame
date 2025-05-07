@@ -1,62 +1,125 @@
-# Implementation Notes
 
-1.
-    I decided to to create an interface called BrickCollisionHandler which exposes the minimally required api
-    in order to facilitate the functionality of the special collisions. In addition, I created a child class
-    for the GameObjectCollection class called BrickerObjectManager which inherents from GameObjectCollection
-    and implements the BrickCollisionHandler interface. This class is responsible for managing game logic, and
-    in particular, the special collisions.
-    Pros: a) Centralized Control: All modifications to game logic are managed from a single point, enhancing
-          consistency and making updates easier.
-          b) Encapsulation: The details of game logic are hidden from the collision strategies, reducing the
-          risk of errors, unauthorized changes and coupling between the strategies and the
-           BrickerObjectManager, all I need is a class that implements the API.
-          c) It also aligns with the Single Responsibility Principle, as BrickerObjectManager focuses solely
-          on adhering to the game logic.
-    Cons:
-          a) Potential Complexity: As more game logic is added BrickerObjectManager may become more complex,
-          in which case we'd perhaps want to consider breaking it down into smaller classes responsible for
-          different aspects of the game logic.
-          b) Potential Coupling: If the game logic is tightly coupled to the BrickerObjectManager, it may be
-          difficult to change the game logic without affecting the BrickerObjectManager class.
-2. Explain how you implemented the display of the player's life number (graphically and numerically) from
-   part 1.8 of the exercise. Explain In short, what is the function of each class you added in the code.
-    I implemented the life counters utilizing the GameObject class and a GameObjectFactory class I
-    Implemented which streamlines the process of building all game objects in these in particular.
-    The graphical life counter is actually a Heart object that serves the purpose of all hearts in the game.
-    Either graphical ones which don't collide with anything or the falling ones. The numerical life counter is
-    a simple game object. In order to get the appropriate text renderable object I wrote a static utility
-    method "getLivesDisplayRenderable" that lives inside the static class BrickerUtils, it returns a
-    TextRenderable object with the current number of lives.
-3. Briefly explain how you implemented each of the special behaviors (except the double). \
-   Explain the role of the classes you added to implement the behavior, if you added them.
-    As I mentioned in the first question, I created an interface called BrickCollisionHandler which exposes
-    the minimally required api in order to facilitate the functionality of the special collisions.
-    Each special behavior (besides the double strategy) is handled by a BrickCollisionHandler, which
-    in our case is implemented by the BrickerObjectManager class.
-    In addition, I created a CallbackComponent class which enables the dynamic addition of behaviors to game
-    objects.
-    a) ExtraPucks: I simply use the handler methods: "removeBrick" and "addPuck" to remove the brick and add
-    the pucks. I utilize the CallbackComponent to overload the created pucks with callbacks in charge of
-    performing the appropriate puck behaviors, i.e. "removeIfBelowWindow".
-    b) ExtraPaddle: I use the handler methods: "removeBrick" and "addTempPaddle". I utilize the
-    CallbackComponent to overload the created paddle with callbacks in charge of performing the appropriate
-    paddle behaviors, i.e. "removeIfMaxHitsReached" and "stopPaddleIfHitsBorders".
-    c) CameraFollowsBall: I use the handler methods: "removeBrick" and "startCamFollowBall". I utilize the
-    CallbackComponent to overload the ball with the "stopCamFollowIfBallHitsReached" callback.
-    d) FallingHeart: I use the handler methods: "removeBrick" and "addFallingHeart". I utilize the
-    CallbackComponent to overload the created heart with the "removeIfBelowWindow" and
-    "convertToLifeIfHitPaddle" callbacks.
-4. Explain how you implemented the double behavior in part 2.2.5. Refer in the explanation to the design of
-   the code, as well as how you limited the number of behaviors to 3 in the code.
-    The double strategy is implemented by using (roughly) the decorator design pattern. Thought I didn't
-    create a new interface for a decorator, but I use composition to maintain a list of strategies needed
-    to be executed on collision. I also created a BrickCollisionFactory class that is responsible for
-    sampling random strategies for a brick and for the double strategy. Using the factory I build a
-    DoubleStrategy object that contains the array list of strategies that need to be executed on collision.
-    The logic for the limitation of max 3 behaviors is implemented by sampling first 2 strategies from the 5
-    special ones, and if one of which is the double strategy, I sample 3 strategies. If not, I sample 2. It
-    adheres to the probability requirements and is simple and good, and easy to expand in the future since
-    the arraylist is dynamic.
-5.
-    Not that I remember.
+# Bricker Game
+
+A feature-rich, extensible Java implementation of an *Arkanoid*-style game, built using the [DanoGameLab](https://github.com/danorg/DanoGameLab) game framework.
+
+## 🎯 Purpose
+
+This project was developed as a comprehensive object-oriented programming assignment. I used it to explore and demonstrate strong design principles (SRP, OCP, composition over inheritance), clean code structure, and careful architectural choices — with the goal of delivering a polished, extensible game system.
+
+---
+
+## 🧱 Game Overview
+
+Bricker is a brick-breaking game where the player controls a paddle to bounce a ball and destroy bricks. It includes:
+
+- Multiple brick behaviors (extra pucks, extra paddle, falling heart, camera follow, and a double strategy).
+- Both graphical and numerical life counters.
+- Temporary paddle mechanics.
+- Responsive paddle and puck physics.
+- A modular architecture for scalable feature expansion.
+
+---
+
+## 🧩 Architecture Highlights
+
+### 📁 Modular Package Structure
+```bash
+src/bricker/
+├── brick_strategies/     # Collision strategies, extensible and decoupled
+├── gameobjects/          # Custom game entities (Ball, Paddle, Heart, etc.)
+└── main/                 # Game initialization, logic, and state management
+````
+
+### 🎮 Game Object Management
+
+* `BrickerObjectManager`: Inherits from `GameObjectCollection`, implements a `BrickCollisionHandler` interface to encapsulate and centralize game logic.
+* `CallbackComponent`: Enables dynamic behavior via runtime-attached callbacks (composition over inheritance).
+* `BrickerObjectFactory`: Clean creation and initialization of game objects, supporting easy expansion and reuse.
+
+### 🧠 Behavioral Design Patterns
+
+* **Strategy Pattern**: For encapsulating brick collision effects (`CollisionStrategy`, and its implementations).
+* **Decorator-like Composition**: `DoubleStrategy` allows combining behaviors without tight coupling or rigid inheritance.
+
+---
+
+## 🛠 Notable Features
+
+| Feature                    | Description                                                           |
+| -------------------------- | --------------------------------------------------------------------- |
+| 🧱 Modular Collision Logic | Easily expandable collision effects using strategy & factory patterns |
+| 🧠 Smart Object Callbacks  | Decoupled, composable behaviors using `CallbackComponent`             |
+| ❤️ Life Management         | Numeric and graphical life indicators with UI layer management        |
+| 🎥 Dynamic Camera          | Smooth camera follow with automated reversion using ball hit tracking |
+| 🎮 Input Handling          | Keyboard-driven paddle and temporary paddle controls                  |
+
+---
+
+## 🔧 Setup & Requirements
+
+* **Language**: Java
+* **Game Framework**: [DanoGameLab](https://github.com/danorg/DanoGameLab)
+* **IDE**: Recommended: IntelliJ IDEA with JDK 17+
+
+### 🔌 External Dependencies
+
+* Place `DanoGameLab.jar` in the `lib/` directory.
+* Ensure project `.iml` or module structure references this library under **Project Structure > Libraries**.
+
+---
+
+## 🧪 Run the Game
+
+```bash
+javac -cp lib/DanoGameLab.jar -d out src/bricker/main/BrickerGameManager.java
+java -cp lib/DanoGameLab.jar;out bricker.main.BrickerGameManager
+```
+
+*Or run directly via IntelliJ by configuring the main class as `bricker.main.BrickerGameManager`.*
+
+---
+
+## 📸 Screenshots & Demo
+
+*Add screenshots or a short demo video link here to visually showcase the game.*
+
+---
+
+## 📝 Design Reflections
+
+This project reflects my ability to:
+
+* Independently analyze and break down complex requirements.
+* Translate them into clean, maintainable, object-oriented code.
+* Think critically about design decisions, tradeoffs, and extensibility.
+
+The project went far beyond a basic exercise: I structured it with real-world readability, testability, and extensibility in mind — and used the opportunity to push architectural clarity and code discipline.
+
+---
+
+## 📂 Assets & Credits
+
+See [`assets/Attribution.txt`](assets/Attribution.txt) for sound/image source attributions.
+
+---
+
+## 💡 Future Improvements
+
+* Add game menus, pause/resume functionality.
+* Include power-ups and score tracking.
+* Refactor `BrickerObjectManager` further if logic grows more complex.
+* Add test scaffolding (mocking game loop elements).
+
+---
+
+## 👤 Author
+
+**Eliav**
+GitHub: [eliav98](https://github.com/eliav98)
+
+---
+
+## 🔗 License
+
+Assets under their respective licenses. Code is free to use and extend for educational or personal purposes.
