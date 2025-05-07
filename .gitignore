@@ -1,0 +1,23 @@
+# IDE-specific files
+.idea/
+
+# Build output
+/out/
+
+# Experimental or old code
+src/old/
+src/bricker1/
+out/production/ex2/old/
+out/production/ex2/bricker1/
+
+# Compressed assets or unused ZIPs (optional)
+*.zip
+zips/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Project metadata
+project-tree.txt
+text.txt

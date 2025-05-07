@@ -1,0 +1,127 @@
+Another paddle:
+When breaking a brick with this behavior, an additional paddle will be created on the screen. The features of the additional paddle:
+1. Same as the normal paddle (same size and same image as the normal paddle).
+2. It will be created in the center of the X axis of the screen, and at a height of half of the screen
+3. It will also move according to the player's movements, similar to the original paddle.
+4. The paddles are not required to be on top of each other. That is, if the original paddle was adjacent to the left wall,
+Then the secondary paddle appeared in the middle, when we click to the right we will bring the original paddle to the middle
+The screen, the secondary paddle will reach the right wall. If we continue to click to the right only the original paddle
+Keep moving because the secondary paddle has already reached the end of the game.
+5. At any given moment there can only be one additional paddle. That is, there can only be two paddles in total
+at a given moment in the game. If a secondary paddle already exists, we will not create a new one.
+6. After 4 hits with a regular ball (or puck) The additional paddle will disappear from the screen.
+
+
+bricker (package)
+    brick_strategies (package)
+        CollisionStrategy (interface)
+        BrickCollisionHandler (interface for handling brick collisions)
+        BasicCollisionStrategy (implements CollisionStrategy)
+        PucksCollisionStrategy (implements CollisionStrategy)
+        ExtraPaddleCollisionStrategy (implements CollisionStrategy)
+        CameraCollisionStrategy (implements CollisionStrategy)
+        ExtraLiveCollisionStrategy (implements CollisionStrategy)
+        DoubleCollisionStrategy (implements CollisionStrategy)
+    gameobjects
+        Ball (extends GameObject)
+        Brick (extends GameObject)
+        Paddle (extends GameObject)
+        Heart (extends GameObject)
+        GameObjectFactory (Factory class for creating game objects)
+    main (package)
+        BrickerGameManager (extends GameManager and implements BoundaryHandler, from danogl library. This is where I handle intialization of gameobjects, and win/lose condition if I need to start a new game)
+        GameController (This is currently where I maintain all game state, and gameobjects addition/removal)
+        BoundaryHandler (Extends Component from danogl library, a component I add to balls, each time an
+        updtate occurs for ball it checks if it is out of bounds and removes it if so using the game controller)
+
+danogl (Game library)
++---collisions
+|   |   Collider.java
+|   |   Collision.java
+|   |   CollisionResolver.java
+|   |   GameObjectCollection.java
+|   |   GameObjectPair.java
+|   |   Layer.java
+|   |   LayerManager.java
+|   |   package-info.java
+|   |   PairCollisionData.java
+|   |   PairCollisionHandler.java
+|   |   PairCollisionManager.java
+|   |
+|   \---AABB
+|           AABBCollider.java
+|           AABBCollision.java
+|           AABBPairCollisionData.java
+|           AABBPairCollisionHandler.java
+|           package-info.java
+|
++---components
+|   |   Component.java
+|   |   CoordinateSpace.java
+|   |   GameObjectPhysics.java
+|   |   package-info.java
+|   |   RendererComponent.java
+|   |   ScheduledTask.java
+|   |   SwitchComponent.java
+|   |   Transform.java
+|   |   Transition.java
+|   |
+|   \---movement_schemes
+|       |   DirectionalMovementScheme.java
+|       |   DragMovementScheme.java
+|       |   MovementScheme.java
+|       |   package-info.java
+|       |   PlatformerMovementScheme.java
+|       |   RailMovementScheme.java
+|       |   SteeringMovementScheme.java
+|       |   TargetMovementScheme.java
+|       |
+|       \---movement_directing
+|               CommonMovementActions.java
+|               KeyboardMovementDirector.java
+|               MouseMovementDirector.java
+|               MovementDirector.java
+|               package-info.java
+|
++---gui
+|   |   GameGUIComponent.java
+|   |   ImageReader.java
+|   |   KeyboardMouseUserInputListener.java
+|   |   MessageHandler.java
+|   |   MsgLevel.java
+|   |   OutputMode.java
+|   |   package-info.java
+|   |   ResourceReader.java
+|   |   Sound.java
+|   |   SoundReader.java
+|   |   UserInputListener.java
+|   |   WindowController.java
+|   |
+|   +---mouse
+|   |       MouseAction.java
+|   |       MouseActionParams.java
+|   |       MouseButton.java
+|   |       package-info.java
+|   |
+|   \---rendering
+|           AnimationRenderable.java
+|           Camera.java
+|           ConfigureGraphics.java
+|           ImageRenderable.java
+|           OvalRenderable.java
+|           package-info.java
+|           RectangleRenderable.java
+|           Renderable.java
+|           ShapeRenderable.java
+|           SwitchRenderable.java
+|           TextRenderable.java
+|
+\---util
+        Border.java
+        ConcatIterator.java
+        Counter.java
+        FPSCounter.java
+        ModifiableList.java
+        MutableVector2.java
+        package-info.java
+        Vector2.java
